@@ -34,9 +34,6 @@ for col in columns_list:
     if col not in data.columns: 
         break
     
-#import sys 
-#sys.version_info.major
-#'JAVA_HOME' in os.environ
 #data['Date Order'] = data['Date Order'].apply(dateutil.parser.parse, dayfirst = True)
 
 data['month'] = data['Date Order'].dt.month.astype('int64')
