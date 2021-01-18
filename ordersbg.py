@@ -11,7 +11,7 @@ Created on Tue Sep 22 09:40:56 2020
 
 @author: Iveta
 """
-
+from whitenoise import WhiteNoise
 import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
