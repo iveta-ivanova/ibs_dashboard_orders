@@ -25,7 +25,8 @@ import datetime
 from datetime import date
 
 app = dash.Dash(__name__)
-server = ordersbg.server
+server = app.server
+server.wsgi_app = WhiteNoise(server.wsgi_app, root=‘static/’)
 
 data = pd.read_excel('Test.xls')        ## can use Sqlite, posgresSQL, API....
 

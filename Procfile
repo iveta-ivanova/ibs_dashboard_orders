@@ -1,1 +1,1 @@
-a.	web: gunicorn ordersbg:server
+web: gunicorn ordersbg:server
