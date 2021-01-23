@@ -11,7 +11,7 @@ Created on Tue Sep 22 09:40:56 2020
 
 @author: Iveta
 """
-from whitenoise import WhiteNoise
+#from whitenoise import WhiteNoise
 import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
@@ -26,7 +26,7 @@ from datetime import date
 
 app = dash.Dash(__name__)
 server = app.server
-server.wsgi_app = WhiteNoise(server.wsgi_app, root=‘static/’)
+#server.wsgi_app = WhiteNoise(server.wsgi_app, root=‘static/’)
 
 data = pd.read_excel('Test.xls')        ## can use Sqlite, posgresSQL, API....
 
