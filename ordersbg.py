@@ -25,7 +25,7 @@ import datetime
 from datetime import date
 
 app = dash.Dash(__name__)
-server = app.server
+server = ordersbg.server
 
 data = pd.read_excel('Test.xls')        ## can use Sqlite, posgresSQL, API....
 
