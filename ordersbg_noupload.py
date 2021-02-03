@@ -10,10 +10,6 @@ Created on Sun Sep 27 15:41:17 2020
 Created on Tue Sep 22 09:40:56 2020
 
 @author: Iveta
-
-includes upload file option using shared callbacks and hidden div 
-when no file uploaded - a test file is run 
-
 """
 #from whitenoise import WhiteNoise
 import dash
@@ -35,10 +31,10 @@ server = app.server
 data = pd.read_excel('Test.xls')        ## can use Sqlite, posgresSQL, API....
 
 columns_list = ['CodeCustomers','NameCustomers','SumOrder','Date Order']
-for col in columns_list:
-    if col not in data.columns:
+for col in columns_list: 
+    if col not in data.columns: 
         break
-
+    
 #data['Date Order'] = data['Date Order'].apply(dateutil.parser.parse, dayfirst = True)
 
 data['month'] = data['Date Order'].dt.month.astype('int64')
@@ -47,7 +43,7 @@ data['day'] = data['Date Order'].dt.day.astype('int64')
 data['date'] = data['Date Order'].dt.date.astype('category')      ##date is an object, Date Order is a datetime object
 
 
-## create group object by customer name
+## create group object by customer name 
 dfMeanClientAll = data.groupby(['NameCustomers']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round(0)
 dfMeanClientByMonthYear = data.groupby(['NameCustomers', 'month','year']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round(0)
 dfMeanByMonthYear = data.groupby(['month','year']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round(0)
@@ -72,7 +68,7 @@ app.layout = html.Div([
     dbc.Row(
         dbc.Col([
             html.Br(),
-            html.H1('Вашите данни визуализирани',
+            html.H1('Вашите данни визуализирани',                 
                 style = {'textAlign': 'center'}),
             html.Br()],
             width = {'size':11, 'offset':1}
@@ -89,15 +85,15 @@ app.layout = html.Div([
             html.Br(),
             html.H2('Вижте топ клиенти за даден времеви период')],
             width = {'size':4, 'offset':2})
-            ]),
+            ]),   
     dbc.Row([
         dbc.Col(
-            html.Div([
+            html.Div([   
                 html.Label('Изберете клиент'),
                 dcc.Dropdown(
                     id = 'customer-choice',
                     options = [
-                        {'label': l, 'value': l}
+                        {'label': l, 'value': l} 
                         for l in data['NameCustomers'].unique()
                         ],
                     #multi = True,
@@ -110,26 +106,26 @@ app.layout = html.Div([
                 html.Br(),
                 html.Br(),
                 html.Div(
-                    id = 'client-month-plot'),]),
+                    id = 'client-month-plot'),]), 
         width = {'size': 3, 'offset':1, 'order': 1}
                 ),
         dbc.Col([
-            html.Label('Период по години'),
+            html.Label('Период по години'), 
                 dcc.Checklist(
                     id = 'year-checklist',
                     options = [
-                        {'label': str(y), 'value': y, 'disabled':False}
+                        {'label': str(y), 'value': y, 'disabled':False} 
                         for y in data['year'].unique()
                         ],
                     labelStyle = dict(display = 'block'),
-                    value = [x for x in data['year'].unique()]                     ## figure out how NOT to hard code this
+                    value = [x for x in data['year'].unique()]                     ## figure out how NOT to hard code this 
                     ),
             html.Br(),
             html.Label('Период по месеци'),
                 dcc.RangeSlider(
                     id = 'slider-month',
                     min = data['month'].min(),
-                    max = data['month'].max(),
+                    max = data['month'].max(), 
                     #marks = {int(i):str(j) for i,j in zip(range(len(df2)), df2['month'])},
                     marks = {
                         1: {'label': 'Януари', 'style': {'transform': 'rotate(60deg)'}},
@@ -165,7 +161,7 @@ app.layout = html.Div([
             html.Div(
                 id = 'top-clients')],
             width = {'size': 4, 'offset':3, 'order': 2}),
-    ]),
+    ]), 
     html.Br(),
     html.Br(),
     dbc.Row([
@@ -192,21 +188,21 @@ app.layout = html.Div([
         dbc.Col(
             html.Div(
                 dash_table.DataTable(
-                    id = 'table',
+                    id = 'table',  
                     data = [],
                     columns = [{'name': i, 'id': i} for i in (dfMeanClientAll.columns)],
                     style_cell={'textAlign': 'center',
                                 'fontWeight':'bold',
                                 'padding': '15px'},
                     style_header={'fontWeight': 'bold'},
-
+                    
                     page_current=0,
                     page_size= PAGE_SIZE,
                     page_action='custom',
-
+    
                     filter_action='custom',
                     filter_query='',
-
+    
                     sort_action='custom',
                     sort_mode='multi',
                     sort_by=[],
@@ -220,7 +216,7 @@ app.layout = html.Div([
                          'width': '50%'},
                         {'if': {'column_id': 'NameCustomers'},
                          'width': '50%'}]
-                ),
+                ), 
                 ),
             width = {'size':4, 'offset':0})
         ]),
@@ -243,7 +239,7 @@ app.layout = html.Div([
                     style_header={'fontWeight': 'bold'},
                     sort_action='custom',
                     sort_mode='multi',
-                    sort_by=[],
+                    sort_by=[], 
                     fixed_rows={'headers': True},
                     style_as_list_view=True,
                     style_table = {'height': '400px',
@@ -260,7 +256,7 @@ app.layout = html.Div([
                 ),
             width = {'size': 4, 'offset': 1})
         ])
-])
+])         
 
 """ Useful functions """
 
@@ -299,29 +295,29 @@ def split_filter_part(filter_part):
 
 def get_dataframe_months_years(value):
     dff = pd.DataFrame()
-    if value == 'сумарно':
+    if value == 'сумарно': 
         dff = data.groupby(['month','year']).agg({'SumOrder': 'sum'}).fillna(0).reset_index()
     if value == 'минимално':
         dff = data.groupby(['month','year']).agg({'SumOrder': 'min'}).fillna(0).reset_index()
-    if value == 'максимално':
+    if value == 'максимално': 
         dff = data.groupby(['month','year']).agg({'SumOrder': 'max'}).fillna(0).reset_index()
-    if value == 'средно':
+    if value == 'средно': 
         dff = data.groupby(['month','year']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round()
-    return dff
+    return dff 
 
 def get_dataframe_clients(value):
     dff = pd.DataFrame()
-    if value == 'сумарно':
+    if value == 'сумарно': 
         dff = data.groupby(['NameCustomers']).agg({'SumOrder': 'sum'}).fillna(0).reset_index()
     if value == 'минимално':
         dff = data.groupby(['NameCustomers']).agg({'SumOrder': 'min'}).fillna(0).reset_index()
-    if value == 'максимално':
+    if value == 'максимално': 
         dff = data.groupby(['NameCustomers']).agg({'SumOrder': 'max'}).fillna(0).reset_index()
-    if value == 'средно':
+    if value == 'средно': 
         dff = data.groupby(['NameCustomers']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round()
-    return dff
+    return dff 
 
-def get_client_df(client):
+def get_client_df(client): 
     # here data holds the csv file read on the first file
     dfAll = data.loc[data['NameCustomers']==client]
     dfmean = data.groupby(['NameCustomers', 'month','year']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round(0)
@@ -347,40 +343,40 @@ def get_client_df(client):
      State('year-checklist','value'),
      ]
     )
-def show_top_clients(clicks, n, months, years):
+def show_top_clients(clicks, n, months, years): 
     # slider and checklist value is a list [ x , x]
     # months[0] (min) --> months[1] (max)
         df = data
         if months and years and n:
-            if len(months) == 1:
+            if len(months) == 1:    
                 months.append(months[0])
-            if len(years) == 1:
-                years.append(years[0])
+            if len(years) == 1: 
+                years.append(years[0])                
             df1 = df[(df['month'] >= months[0]) & (df['month'] <= months[1])]
-            df2 = df1[(df1['year'] >= years[0]) & (df1['year'] <= years[1])]
-            #if n > len(df2['NameCustomers'].unique()):
+            df2 = df1[(df1['year'] >= years[0]) & (df1['year'] <= years[1])] 
+            #if n > len(df2['NameCustomers'].unique()): 
             #    n = len(df2['NameCustomers'].unique())
             dfgraph = df2.groupby(['NameCustomers']).agg({'SumOrder': 'sum'}).fillna(0).reset_index().round(0).sort_values('SumOrder', ascending = True).tail(n)
             title = 'Топ {} клиенти по общи продажби'.format(n)
             height = int(0)
-            if  n== 5:
+            if  n== 5: 
                 height = 350
-            if n== 10:
+            if n== 10: 
                 height = 500
-            if n== 20:
+            if n== 20: 
                 height = 1000
-            if n== 50:
+            if n== 50: 
                 height = 1200
             return html.Div(
                 dcc.Graph(
                         figure={
                             "data": [
                                 {
-                                    "x": dfgraph['SumOrder'],
+                                    "x": dfgraph['SumOrder'],    
                                     "y": dfgraph['NameCustomers'],
                                     "type": "bar",
                                     'orientation': 'h',
-                                },
+                                }, 
                             ],
                             "layout": {
                                 'title': {'text': title},
@@ -388,7 +384,7 @@ def show_top_clients(clicks, n, months, years):
                                 "yaxis": {"automargin": True},
                                 'height': height,
                                 'width':500,
-                                "margin": {"t": 50, "l":200, "r": 0},
+                                "margin": {"t": 50, "l":200, "r": 0}, 
                                 'autosize': True
                             }
                         },
@@ -396,13 +392,13 @@ def show_top_clients(clicks, n, months, years):
                 style = {'overflowY': 'scroll',
                                           'height': 450,
                                           'width': 600})
-
+    
 @app.callback(
     Output('client-summary', 'children'),
     [Input('customer-choice','value')
      ]
     )
-def print_client_summary(client):
+def print_client_summary(client): 
     mean_all = int()
     sum_all = int()
     dfall, dfmean, dfsum, dfmin, dfmax = get_client_df(client)
@@ -432,11 +428,11 @@ def client_month_plot(client):
                         figure={
                             "data": [
                                 {
-                                    "x": dff.loc[dff['year']==y]['month'],
+                                    "x": dff.loc[dff['year']==y]['month'],    
                                     "y": dff.loc[dff['year']==y]['SumOrder'],
                                     "type": "lines",
                                     'name': str(y)
-                                } for y in dff['year'].unique()
+                                } for y in dff['year'].unique() 
 
                             ],
                             "layout": {
@@ -451,7 +447,7 @@ def client_month_plot(client):
                     )
                 ]
             )
-
+    
 
 @app.callback(
     Output('table-time', 'data'),             ## update table when changes happen (here only sorting)
@@ -470,7 +466,7 @@ def sort_time_table(sort_by,display_input,display_state):
                 inplace=False
             )
         return dff.to_dict('records')
-
+        
 @app.callback(                      ## update table when change page, filter or sort by
     Output('table', "data"),
     [Input('table', "page_current"),
@@ -480,11 +476,11 @@ def sort_time_table(sort_by,display_input,display_state):
      Input('table', "filter_query"),
      State('display-type','value')])
 def update_table(page_current, display_input, page_size, sort_by, filter, display_state):
-        dff = get_dataframe_clients(display_state)
+        dff = get_dataframe_clients(display_state)    
         filtering_expressions = filter.split(' && ')
         for filter_part in filtering_expressions:
             col_name, operator, filter_value = split_filter_part(filter_part)
-
+    
             if operator in ('eq', 'ne', 'lt', 'le', 'gt', 'ge'):
                 # these operators match pandas series operator method names
                 dff = dff.loc[getattr(dff[col_name], operator)(filter_value)]
@@ -503,14 +499,14 @@ def update_table(page_current, display_input, page_size, sort_by, filter, displa
                 ],
                 inplace=False
             )
-
-        return dff.iloc[
+    
+        return dff.iloc[ 
             page_current*page_size: (page_current + 1)*page_size
         ].to_dict('records')
 
 
 @app.callback(
-    Output('time-graph-container', "children"),    ##
+    Output('time-graph-container', "children"),    ## 
     [Input('table-time', "data"),
      State('display-type','value')
      ]
@@ -524,11 +520,11 @@ def update_time_graph(rows, display_state):             ## rows = data (from abo
                 figure={
                     "data": [
                                 {
-                                    "x": dff.loc[dff['year']==y]['month'],
+                                    "x": dff.loc[dff['year']==y]['month'],    
                                     "y": dff.loc[dff['year']==y]['SumOrder'],
                                     "type": "bar",
                                     'name': str(y)
-                                } for y in dff['year'].unique()
+                                } for y in dff['year'].unique() 
                     ],
                     "layout": {
                         'title': {'text': title},
