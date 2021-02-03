@@ -513,14 +513,14 @@ def client_month_plot(contents, client):
                 [
                     dcc.Graph(
                         figure={
-                            "data":
+                            "data":[
                                 {
                                     "x": dff.loc[dff['year']==y]['month'],
                                     "y": dff.loc[dff['year']==y]['SumOrder'],
                                     "type": "lines",
                                     'name': str(y)
                                 } for y in dff['year'].unique()
-                            ,
+                            ],
                             "layout": {
                                 'title': {'text': title},
                                 "xaxis": {"automargin": True},
