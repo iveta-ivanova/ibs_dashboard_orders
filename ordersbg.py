@@ -518,7 +518,7 @@ def client_month_plot(contents, client):
                                     "x": dff.loc[dff['year']==y]['month'],
                                     "y": dff.loc[dff['year']==y]['SumOrder'],
                                     "type": "lines",
-                                    'name': str(y),
+                                    'name': str(y)
                                 } for y in dff['year'].unique()
                             ,
                             "layout": {
