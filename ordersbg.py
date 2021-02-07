@@ -17,7 +17,7 @@ navbar
 from io import BytesIO --> for image processing
 
 '''
-import os 
+#import os 
 #os.chdir('C:\\Users\Iveta\Desktop\PROGRAMMING\IBS Data Analytics')
 
 import io
