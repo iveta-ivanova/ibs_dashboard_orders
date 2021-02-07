@@ -41,8 +41,6 @@ server = app.server
 
 columns_list = ['CodeCustomers','NameCustomers','SumOrder','Date Order']
 
-PAGE_SIZE = 15
-
 app.layout = html.Div([
     dbc.Row([
         html.Div(
@@ -195,7 +193,7 @@ app.layout = html.Div([
                     style_header={'fontWeight': 'bold'},
                     
                     page_current=0,
-                    page_size= PAGE_SIZE,
+                    page_size= 15,
                     page_action='custom',
     
                     filter_action='custom',
