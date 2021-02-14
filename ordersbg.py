@@ -75,8 +75,12 @@ app.layout = html.Div([
         ]),
     dbc.Row(
         dbc.Col(
-            html.Div(
-                id = 'file-info'),
+            dcc.Loading(
+                id = "loading-file-info",
+                type = 'graph',
+                fullscreen = True,
+                children = html.Div(
+                    id = 'file-info')),
         width = {'size': 3, 'offset': 1})
         ),
     html.Br(),
@@ -97,26 +101,35 @@ app.layout = html.Div([
         dbc.Col(
             html.Div([   
                 html.Label('Изберете клиент'),
-                dcc.Dropdown(
+                dcc.Loading(
+                    id = 'loading-customer-choice', 
+                    type = 'circle',
+                    children = dcc.Dropdown(
                     id = 'customer-choice',
                     placeholder = 'Изберете клиент',
-                    ),
+                    )),
                 html.Br(),
                 html.Br(),
-                html.Div(
-                    id = 'client-summary'),
+                dcc.Loading(id = 'loading-client-summary', 
+                            type = 'circle',
+                            children = html.Div(
+                    id = 'client-summary')),
                 html.Br(),
                 html.Br(),
-                html.Div(
-                    id = 'client-month-plot'),]), 
+                dcc.Loading(id = 'loading-client-month-plot', 
+                            type = 'circle',
+                            children = html.Div(
+                    id = 'client-month-plot')),]), 
         width = {'size': 3, 'offset':1, 'order': 1}
                 ),
         dbc.Col([
             html.Label('Период по години'), 
-                dcc.Checklist(
+                dcc.Loading(id = "loading-year-checklist", 
+                            type = 'circle',
+                            children = dcc.Checklist(
                     id = 'year-checklist',
-                    labelStyle = dict(display = 'block')                     ## figure out how NOT to hard code this
-                    ),
+                    labelStyle = dict(display = 'block')                    
+                    )),
             html.Br(),
             html.Label('Период по месеци'),
                 dcc.RangeSlider(
@@ -155,8 +168,11 @@ app.layout = html.Div([
                 ]),
             html.Br(),
             html.Br(),
-            html.Div(
-                id = 'top-clients')],
+            dcc.Loading(id = 'loading-top-clients', 
+                        type = 'circle', 
+                        children = html.Div(
+                id = 'top-clients'))
+            ],
         width = {'size': 4, 'offset':3, 'order': 2}
         )
     ]), 
@@ -180,10 +196,16 @@ app.layout = html.Div([
     html.Br(),
     dbc.Row([
         dbc.Col(
+            dcc.Loading(id = 'loading-client-graph-container', 
+                        type = 'circle',
+                        children =
             html.Div(
-                id='client-graph-container'),
+                id='client-graph-container')),
             width = {'size':6, 'offset':1}),
         dbc.Col(
+            dcc.Loading(id = 'loading-table', 
+                        type = 'circle',
+                        children = 
             html.Div(
                 dash_table.DataTable(
                     id = 'table',                      
@@ -213,17 +235,23 @@ app.layout = html.Div([
                         {'if': {'column_id': 'NameCustomers'},
                          'width': '50%'}]
                 ), 
-                ),
+                )),
             width = {'size':4, 'offset':0})
         ]),
     html.Br(),
     html.Br(),
     dbc.Row([
         dbc.Col(
+            dcc.Loading(id = 'loading-time-graph-container', 
+                        type = 'circle', 
+                        children =
             html.Div(
-                id='time-graph-container'),
+                id='time-graph-container')),
             width = {'size': 5, 'offset': 1}),
         dbc.Col(
+            dcc.Loading(id = 'loading-table-time',
+                        type= 'circle',
+                        children =
             html.Div(
                 dash_table.DataTable(
                     id = 'table-time',
@@ -247,7 +275,7 @@ app.layout = html.Div([
                         {'if': {'column_id': 'year'},
                          'width': '33%'}]
                 ),
-                ),
+                )),
             width = {'size': 4, 'offset': 1})
         ])
 ])         
