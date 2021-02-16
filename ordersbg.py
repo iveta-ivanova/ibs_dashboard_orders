@@ -32,11 +32,12 @@ import pandas as pd
 import dateutil
 import datetime
 
-#stylesheet = 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/minty/bootstrap.min.css'
+stylesheet = 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css'
 
 ## check other ones on bootswatch.com
+app = dash.Dash(__name__, external_stylesheets = [stylesheet])
 #app = dash.Dash(__name__, external_stylesheets = [dbc.themes.SUPERHERO])
-app = dash.Dash(__name__)
+#app = dash.Dash(__name__)
 server = app.server
 
 columns_list = ['CodeCustomers','NameCustomers','SumOrder','Date Order']
@@ -395,7 +396,7 @@ def get_client_df(data, client):
 )
 def parse_contents(contents, filename, date):              ## process the input data
     if contents is None:          ## if nothing is uploaded, the contents are the test file => should write this down somewhere
-        data = pd.read_excel('Test.xls')
+        data = pd.read_excel('test2.xls')
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
@@ -407,10 +408,17 @@ def parse_contents(contents, filename, date):              ## process the input 
         for col in columns_list:
             if col not in data.columns:
                 fileInfo = "Файлът Ви не е в правилен формат, моля свържете се с Катя :) "
-                break
+                break        
             else:
                 fileInfo = 'В момента разглеждате данните за файл, последно обновен на {} '.format(datetime.datetime.fromtimestamp(date).replace(microsecond = 0))
     # process data
+    # delete rows with NА values
+    data.dropna(axis = 0, 
+                how = 'any',
+                thresh = None,
+                subset = None, 
+                inplace = True)
+    #if Date is a string, convert it to a datetime format for further processing
     if type(data['Date Order']) is str: 
         data['Date Order'] = data['Date Order'].apply(dateutil.parser.parse, dayfirst = True)
     else: 
