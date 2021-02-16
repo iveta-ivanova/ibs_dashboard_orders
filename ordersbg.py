@@ -396,7 +396,7 @@ def get_client_df(data, client):
 )
 def parse_contents(contents, filename, date):              ## process the input data
     if contents is None:          ## if nothing is uploaded, the contents are the test file => should write this down somewhere
-        data = pd.read_excel('test2.xls')
+        data = pd.read_excel('Test.xls')
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
