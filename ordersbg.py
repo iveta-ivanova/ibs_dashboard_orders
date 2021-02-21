@@ -358,11 +358,11 @@ def check_columns(data_columns):       # if current data columns do not match th
     expected_columns = ['CodeCustomers', 'NameCustomers', 'SumOrder', 'Date Order']
     return all(column in expected_columns for column in data_columns)
 
-def check_format(content_string, time):
+def check_format(content_string, time, tz):
     try:
         decoded = base64.b64decode(content_string)         # if file type is fine, output the new file
         data = pd.read_excel(io.BytesIO(decoded))
-        fileInfo = 'В момента разглеждате данните за файл, последно обновен на {}.'.format(time)
+        fileInfo = 'В момента разглеждате данните за файл, последно обновен на {}. Местно време: {}.'.format(time, tz)
     except:                                                     # if file type is wrong, output test file
         fileInfo = "Грешка: неправилен формат на файла. Качването неуспешно: в момента разглеждате тестов файл."
         data = pd.read_excel('Test.xls')
@@ -384,9 +384,9 @@ def parse_contents(contents, filename, unix_time):
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
-        local_timezone = tzlocal.get_localzone()   ## get pytz timezone
+        local_timezone = tzlocal.get_localzone()   ## get tz timezone
         time = datetime.datetime.fromtimestamp(unix_time, local_timezone).strftime('%d-%m-%Y  %H:%M:%S')
-        data, fileInfo = check_format(content_string, time)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
+        data, fileInfo = check_format(content_string, time, local_timezone)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
         if check_columns(data.columns):    ## level 3: columns. If columns ok (TRUE), keep data and fileInfo from above
             pass
         else:              ## if columns wrong (FALSE), replace data with test file again and fileInfo with suitable error message
