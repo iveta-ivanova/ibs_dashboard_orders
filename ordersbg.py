@@ -34,17 +34,15 @@ import datetime
 
 stylesheet = 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css'
 
-## check other ones on bootswatch.com
 app = dash.Dash(__name__, external_stylesheets = [stylesheet])
 #app = dash.Dash(__name__, external_stylesheets = [dbc.themes.SUPERHERO])
-#app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div([
     dbc.Row([
         html.Div(
             id = 'hidden-div', 
-            style = {'display': 'none'}      ## hidden only if no error ?
+            style = {'display': 'none'}
         ),
         dbc.Col([
             html.Br(),
@@ -79,7 +77,9 @@ app.layout = html.Div([
                 type = 'graph',
                 fullscreen = True,
                 children = html.Div(
-                    id = 'file-info')),
+                    id = 'file-info'),
+                style = {'fontColor': 'blue'}
+            ),
         width = {'size': 3, 'offset': 1})
         ),
     html.Br(),
@@ -135,7 +135,6 @@ app.layout = html.Div([
                     id = 'slider-month',
                     min = 1,
                     max = 12,
-                    #marks = {int(i):str(j) for i,j in zip(range(len(df2)), df2['month'])},
                     marks = {
                         1: {'label': 'Януари', 'style': {'transform': 'rotate(60deg)'}},
                         2: {'label': 'Февруари', 'style': {'transform': 'rotate(60deg)'}},
