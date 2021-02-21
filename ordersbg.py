@@ -40,8 +40,6 @@ app = dash.Dash(__name__, external_stylesheets = [stylesheet])
 #app = dash.Dash(__name__)
 server = app.server
 
-columns_list = ['CodeCustomers','NameCustomers','SumOrder','Date Order']
-
 app.layout = html.Div([
     dbc.Row([
         html.Div(
@@ -369,23 +367,23 @@ def get_client_df(data, client):
     return dfAll, dfMean, dfSum, dfMin, dfMax
 
 
+
+def check_columns(data_columns):       # if current data columns do not match the expected ones, return False
+    expected_columns = ['CodeCustomers', 'NameCustomers', 'SumOrder', 'Date Order']
+    return all(column in expected_columns for column in data_columns)
+
+def check_format(content_string):
+    try:
+        decoded = base64.b64decode(content_string)         # if file type is fine, output the new file
+        data = pd.read_excel(io.BytesIO(decoded))
+        fileInfo = 'fileInfo = "В момента разглеждате данните за файл, последно обновен на {}'.format(datetime.datetime.fromtimestamp(date).replace(microsecond=0))
+    except:                                                     # if file type is wrong, output test file
+        fileInfo = "Грешка: файлът Ви е в неправилен формат. Качването неуспешно: в момента разглеждате тестов файл."
+        data = pd.read_excel('Test.xls')
+    finally:
+        return data, fileInfo
+
 """CallBacks"""
-# =============================================================================
-# @app.callback(
-#     Output(),
-#     [Input('upload-data','contents'),
-#      State('upload-data','filename'),
-#      State('upload-data','last_modified')
-#      ])
-# def retrieve_data(list_of_contents, list_of_names, list_of_dates):
-#     if list_of_contents is not None:
-#         children = [
-#             parse_contents]
-# =============================================================================
-
-
-############# add callbacks to every dcc component that is created via the table (options, datatable, etc ... )
-# can 'data' file / a variable be an output?
 
 @app.callback( ## output json in hidden div
     [Output('hidden-div', 'children'),
@@ -394,23 +392,19 @@ def get_client_df(data, client):
     State('upload-data', 'filename'),
     State('upload-data', 'last_modified')
 )
-def parse_contents(contents, filename, date):              ## process the input data
-    if contents is None:          ## if nothing is uploaded, the contents are the test file => should write this down somewhere
+def parse_contents(contents, filename, date):
+    if contents is None:          ## lebel 1: if nothing is uploaded, the contents are the test file
         data = pd.read_excel('Test.xls')
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
-        ## include errors for file type and for column names
-        decoded = base64.b64decode(content_string)
-        #if 'xls' in filename:
-        data = pd.read_excel(io.BytesIO(decoded))
-    
-        for col in columns_list:
-            if col not in data.columns:
-                fileInfo = "Файлът Ви не е в правилен формат, моля свържете се с Катя :) "
-                break        
-            else:
-                fileInfo = 'В момента разглеждате данните за файл, последно обновен на {} '.format(datetime.datetime.fromtimestamp(date).replace(microsecond = 0))
+        data, fileInfo = check_format(content_string)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
+        if check_columns(data.columns):    ## level 3: columns. If columns ok (TRUE), keep data and fileInfo from above
+            pass
+        else:              ## if columns wrong (FALSE), replace data with test file again and fileInfo with suitable error message
+            data = pd.read_excel('Test.xls')
+            fileInfo = "Грешкa в имената на колоните. Качването неуспешно: в момента разглеждате тестов файл."
+    #
     # process data
     # delete rows with NА values
     data.dropna(axis = 0, 
@@ -647,7 +641,7 @@ def update_table(contents, page_current, display_input, page_size, sort_by, filt
 
 
 @app.callback(
-    Output('time-graph-container', "children"),    ## 
+    Output('time-graph-container', "children"),    ##
     [Input('table-time', "data"),
      State('display-type','value')
      ]
@@ -685,7 +679,7 @@ def update_time_graph(rows, display_state):             ## rows = data (from abo
     Input('table', "data"),
     State('display-type','value')
     )
-def update_graph(rows, display_state):         ## rows = data (from table)
+def update_graph(rows, display_state):
     dff = pd.DataFrame(rows)
     title = 'Общи продажби по клиенти, {}'.format(display_state)
     return html.Div(
