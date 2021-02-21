@@ -338,21 +338,7 @@ def get_dataframe_clients(data, value):
         dff = data.groupby(['NameCustomers']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round()
     return dff 
 
-# =============================================================================
-# def get_dataframe_time(data,value):
-#     dff = pd.DataFrame()
-#     if value == 'сумарно': 
-#         dff = dfSumByMonthYear
-#     if value == 'минимално':
-#         dff = dfMinByMonthYear
-#     if value == 'максимално': 
-#         dff = dfMaxByMonthYear
-#     if value == 'средно': 
-#         dff = dfMeanByMonthYear
-#     return dff 
-# =============================================================================
-
-def get_client_df(data, client): 
+def get_client_df(data, client):
     dfAll = data.loc[data['NameCustomers']==client]
     dfmean = data.groupby(['NameCustomers', 'month','year']).agg({'SumOrder': 'mean'}).fillna(0).reset_index().round(0)
     dfsum = data.groupby(['NameCustomers', 'month','year']).agg({'SumOrder': 'sum'}).fillna(0).reset_index()
@@ -372,11 +358,11 @@ def check_columns(data_columns):       # if current data columns do not match th
     expected_columns = ['CodeCustomers', 'NameCustomers', 'SumOrder', 'Date Order']
     return all(column in expected_columns for column in data_columns)
 
-def check_format(content_string):
+def check_format(content_string, date):
     try:
         decoded = base64.b64decode(content_string)         # if file type is fine, output the new file
         data = pd.read_excel(io.BytesIO(decoded))
-        fileInfo = 'fileInfo = "В момента разглеждате данните за файл, последно обновен на {}'.format(datetime.datetime.fromtimestamp(date).replace(microsecond=0))
+        fileInfo = 'В момента разглеждате данните за файл, последно обновен на {}'.format(datetime.datetime.fromtimestamp(date).replace(microsecond=0))
     except:                                                     # if file type is wrong, output test file
         fileInfo = "Грешка: файлът Ви е в неправилен формат. Качването неуспешно: в момента разглеждате тестов файл."
         data = pd.read_excel('Test.xls')
@@ -393,12 +379,12 @@ def check_format(content_string):
     State('upload-data', 'last_modified')
 )
 def parse_contents(contents, filename, date):
-    if contents is None:          ## lebel 1: if nothing is uploaded, the contents are the test file
+    if contents is None:          ## level 1: if nothing is uploaded, the contents are the test file
         data = pd.read_excel('Test.xls')
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
-        data, fileInfo = check_format(content_string)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
+        data, fileInfo = check_format(content_string, date)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
         if check_columns(data.columns):    ## level 3: columns. If columns ok (TRUE), keep data and fileInfo from above
             pass
         else:              ## if columns wrong (FALSE), replace data with test file again and fileInfo with suitable error message
