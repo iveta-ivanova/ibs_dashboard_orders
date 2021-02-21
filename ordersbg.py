@@ -32,7 +32,7 @@ import pandas as pd
 import dateutil
 import datetime
 import tzlocal
-
+import pytz
 
 
 stylesheet = 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css'
@@ -384,7 +384,8 @@ def parse_contents(contents, filename, unix_time):
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
-        local_timezone = tzlocal.get_localzone()   ## get tz timezone
+        #local_timezone = tzlocal.get_localzone()   ## get tz timezone
+        local_timezone = pytz.timezone('Europe/Sofia')   ## set timezone we need
         time = datetime.datetime.fromtimestamp(unix_time, local_timezone).strftime('%d-%m-%Y  %H:%M:%S')
         data, fileInfo = check_format(content_string, time, local_timezone)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
         if check_columns(data.columns):    ## level 3: columns. If columns ok (TRUE), keep data and fileInfo from above
@@ -549,19 +550,6 @@ def client_month_plot(contents, client):
                     )
                 ]
             )
-    
-    
-    
-
-# =============================================================================
-# @app.callback(
-#     Output('client-graph', 'children')
-#     [Input('customer-choice','value'),
-#      Input('year-checklist','value'),
-#      Input('slider-month','value')]
-#     )
-# def client_linegraph()
-# =============================================================================
 
 @app.callback(
     [Output('table-time', 'data'),
