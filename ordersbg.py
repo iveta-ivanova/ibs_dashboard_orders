@@ -34,6 +34,7 @@ import datetime
 import tzlocal
 
 
+
 stylesheet = 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css'
 
 app = dash.Dash(__name__, external_stylesheets = [stylesheet])
@@ -384,8 +385,12 @@ def parse_contents(contents, filename, unix_time):
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
+<<<<<<< HEAD
         local_timezone = tzlocal.get_localzone()   ## get pytz timezone
         time = datetime.datetime.fromtimestamp(unix_time, local_timezone).strftime('%d-%m-%Y  %H:%M:%S')
+=======
+        time = datetime.datetime.utcfromtimestamp(unix_time).strftime('%d-%m-%Y  %H:%M:%S')
+>>>>>>> 11f0ce373585c646ddccc4ac58118458d95cb6b2
         data, fileInfo = check_format(content_string, time)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
         if check_columns(data.columns):    ## level 3: columns. If columns ok (TRUE), keep data and fileInfo from above
             pass
