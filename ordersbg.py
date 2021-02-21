@@ -32,6 +32,7 @@ import pandas as pd
 import dateutil
 import datetime
 
+
 stylesheet = 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css'
 
 app = dash.Dash(__name__, external_stylesheets = [stylesheet])
@@ -351,19 +352,18 @@ def get_client_df(data, client):
     #dfMeanMonths = dfMeanClientByMonthYear.loc[dfMeanClientByMonthYear['NameCustomers'] == client]['month']
     return dfAll, dfMean, dfSum, dfMin, dfMax
 
-
-
 def check_columns(data_columns):       # if current data columns do not match the expected ones, return False
     expected_columns = ['CodeCustomers', 'NameCustomers', 'SumOrder', 'Date Order']
     return all(column in expected_columns for column in data_columns)
 
-def check_format(content_string, date):
+def check_format(content_string, time):
     try:
         decoded = base64.b64decode(content_string)         # if file type is fine, output the new file
         data = pd.read_excel(io.BytesIO(decoded))
-        fileInfo = 'В момента разглеждате данните за файл, последно обновен на {}'.format(datetime.datetime.fromtimestamp(date).replace(microsecond=0))
+        #unix = 1612385954.051
+        fileInfo = 'В момента разглеждате данните за файл, последно обновен на {}.'.format(time)
     except:                                                     # if file type is wrong, output test file
-        fileInfo = "Грешка: файлът Ви е в неправилен формат. Качването неуспешно: в момента разглеждате тестов файл."
+        fileInfo = "Грешка: неправилен формат на файла. Качването неуспешно: в момента разглеждате тестов файл."
         data = pd.read_excel('Test.xls')
     finally:
         return data, fileInfo
@@ -377,13 +377,14 @@ def check_format(content_string, date):
     State('upload-data', 'filename'),
     State('upload-data', 'last_modified')
 )
-def parse_contents(contents, filename, date):
+def parse_contents(contents, filename, unix_time):
     if contents is None:          ## level 1: if nothing is uploaded, the contents are the test file
         data = pd.read_excel('Test.xls')
         fileInfo = 'В момента разглеждате данните за предишен файл. Моля дръпнете желания от Вас файл в кутийката отгоре.'
     else: 
         content_type, content_string = contents.split(',')
-        data, fileInfo = check_format(content_string, date)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
+        time = datetime.datetime.utcfromtimestamp(unix_time).strftime('%d-%m-%Y  %H:%M:%S')
+        data, fileInfo = check_format(content_string, time)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
         if check_columns(data.columns):    ## level 3: columns. If columns ok (TRUE), keep data and fileInfo from above
             pass
         else:              ## if columns wrong (FALSE), replace data with test file again and fileInfo with suitable error message
