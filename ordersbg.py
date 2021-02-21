@@ -362,7 +362,6 @@ def check_format(content_string, time):
     try:
         decoded = base64.b64decode(content_string)         # if file type is fine, output the new file
         data = pd.read_excel(io.BytesIO(decoded))
-        #unix = 1612385954.051
         fileInfo = 'В момента разглеждате данните за файл, последно обновен на {}.'.format(time)
     except:                                                     # if file type is wrong, output test file
         fileInfo = "Грешка: неправилен формат на файла. Качването неуспешно: в момента разглеждате тестов файл."
@@ -387,7 +386,6 @@ def parse_contents(contents, filename, unix_time):
         content_type, content_string = contents.split(',')
         local_timezone = tzlocal.get_localzone()   ## get pytz timezone
         time = datetime.datetime.fromtimestamp(unix_time, local_timezone).strftime('%d-%m-%Y  %H:%M:%S')
-        time = datetime.datetime.utcfromtimestamp(unix_time).strftime('%d-%m-%Y  %H:%M:%S')
         data, fileInfo = check_format(content_string, time)   # level 2: format. Returns uploaded file if format ok, test file if wrong format => works
         if check_columns(data.columns):    ## level 3: columns. If columns ok (TRUE), keep data and fileInfo from above
             pass
